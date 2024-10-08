@@ -1,5 +1,10 @@
 # Nuxt 3 Minimal Starter
 
+Example repo for my blog post at
+
+https://alexop.dev/posts/atomic-design-vue-or-nuxt/
+
+
 Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
 ## Setup
