@@ -1,39 +1,33 @@
 <template>
-  <div>
-    <h1 class="text-3xl font-bold mb-6">Todo List</h1>
-    <div class="mb-6">
-      <form @submit.prevent="addTodo" class="flex space-x-2">
-        <input
-          v-model="newTodoTitle"
-          type="text"
-          placeholder="Enter new todo"
-          class="flex-grow px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          required
-        />
+  <div class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-200">Todo App</h1>
+    
+    <!-- Add Todo Form -->
+    <form @submit.prevent="addTodo" class="mb-4">
+      <input
+        v-model="newTodo"
+        type="text"
+        placeholder="Enter a new todo"
+        class="border p-2 mr-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded"
+      />
+      <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition duration-300">
+        Add Todo
+      </button>
+    </form>
+    
+    <!-- Todo List -->
+    <ul class="space-y-2">
+      <li
+        v-for="todo in todos"
+        :key="todo.id"
+        class="flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-700 rounded shadow-sm"
+      >
+        <span class="text-gray-800 dark:text-gray-200">{{ todo.text }}</span>
         <button
-          type="submit"
-          class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-600 dark:hover:bg-blue-700"
+          @click="deleteTodo(todo.id)"
+          class="bg-red-500 hover:bg-red-600 text-white p-1 rounded transition duration-300"
         >
-          Add Todo
-        </button>
-      </form>
-    </div>
-    <div v-if="isLoading" class="text-center">
-      <p class="text-gray-600 dark:text-gray-400">Loading todos...</p>
-    </div>
-    <div v-else-if="error" class="text-center">
-      <p class="text-red-600 dark:text-red-400">{{ error }}</p>
-    </div>
-    <ul v-else class="space-y-4">
-      <li v-for="todo in todos" :key="todo.id" class="bg-white dark:bg-gray-800 shadow rounded-lg p-4 flex items-center">
-        <NuxtLink :to="`/todo/${todo.id}`" class="flex-grow">
-          <span>{{ todo.title }}</span>
-        </NuxtLink>
-        <button
-          @click="removeTodo(todo.id)"
-          class="ml-4 px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-red-600 dark:hover:bg-red-700"
-        >
-          Remove
+          Delete
         </button>
       </li>
     </ul>
@@ -41,27 +35,41 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { storeToRefs } from 'pinia'
-import { useTodoStore } from '~/store/todo'
+import { ref, onMounted } from 'vue'
 
-const todoStore = useTodoStore()
-const { todos, isLoading, error } = storeToRefs(todoStore)
+interface Todo {
+  id: number
+  text: string
+}
 
-const newTodoTitle = ref('')
+const newTodo = ref('')
+const todos = ref<Todo[]>([])
 
-const addTodo = () => {
-  if (newTodoTitle.value.trim()) {
-    todoStore.addTodo(newTodoTitle.value.trim())
-    newTodoTitle.value = ''
+const fetchTodos = async () => {
+  // Simulating API call
+  todos.value = [
+    { id: 1, text: 'Learn Vue.js' },
+    { id: 2, text: 'Build a Todo App' },
+    { id: 3, text: 'Study Atomic Design' }
+  ]
+}
+
+const addTodo = async () => {
+  if (newTodo.value.trim()) {
+    // Simulating API call
+    const newTodoItem: Todo = {
+      id: Date.now(),
+      text: newTodo.value
+    }
+    todos.value.push(newTodoItem)
+    newTodo.value = ''
   }
 }
 
-const removeTodo = (id: number) => {
-  todoStore.removeTodo(id)
+const deleteTodo = async (id: number) => {
+  // Simulating API call
+  todos.value = todos.value.filter(todo => todo.id !== id)
 }
 
-onMounted(async () => {
-  await todoStore.fetchTodos()
-})
+onMounted(fetchTodos)
 </script>
